@@ -1,0 +1,1 @@
+# bookstack-mcp
