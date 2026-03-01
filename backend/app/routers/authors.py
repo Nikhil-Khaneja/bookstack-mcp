@@ -60,3 +60,12 @@ def delete_author(author_id: int, db: Session = Depends(get_db)):
             detail="Cannot delete an author who has associated books. Delete their books first."
         )
     crud.delete_author(db=db, author_id=author_id)
+
+
+# GET /authors/{id}/books — all books written by a specific author
+@router.get("/{author_id}/books", response_model=List[schemas.BookResponse])
+def get_books_by_author(author_id: int, db: Session = Depends(get_db)):
+    author = crud.get_author(db, author_id=author_id)
+    if not author:
+        raise HTTPException(status_code=404, detail="Author not found")
+    return crud.get_books_by_author(db=db, author_id=author_id)
