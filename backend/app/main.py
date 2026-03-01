@@ -1,5 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 from .database import engine, Base
 from .routers import authors, books
 
@@ -23,6 +25,19 @@ app.add_middleware(
 
 app.include_router(authors.router)
 app.include_router(books.router)
+
+
+# Custom handler so Pydantic validation errors return a clean 422 message
+@app.exception_handler(RequestValidationError)
+async def validation_error_handler(request: Request, exc: RequestValidationError):
+    errors = []
+    for error in exc.errors():
+        field = " → ".join(str(e) for e in error["loc"])
+        errors.append({"field": field, "message": error["msg"]})
+    return JSONResponse(
+        status_code=422,
+        content={"detail": "Validation error", "errors": errors}
+    )
 
 
 @app.get("/")
