@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from database import engine, Base
+from .database import engine, Base
 
-# Auto-create tables in MySQL on startup
+# Auto-create tables on startup
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -11,7 +11,7 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Allow requests from the React frontend
+# Allow requests from the React frontend dev server
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://localhost:3000"],
@@ -23,4 +23,4 @@ app.add_middleware(
 
 @app.get("/")
 def home():
-    return {"message": "Library Management System API is running. Visit /docs for Swagger UI."}
+    return {"message": "Library Management System API — visit /docs for Swagger UI"}

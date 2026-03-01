@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, func
 from sqlalchemy.orm import relationship
-from database import Base
+from .database import Base
 
 
 class Author(Base):
@@ -13,7 +13,7 @@ class Author(Base):
     created_at   = Column(DateTime, default=func.now())
     updated_at   = Column(DateTime, default=func.now(), onupdate=func.now())
 
-    # One author → many books
+    # One author can have many books
     books = relationship("Book", back_populates="author")
 
 
