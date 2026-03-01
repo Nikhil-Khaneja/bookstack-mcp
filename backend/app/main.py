@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import engine, Base
+from .routers import authors
 
 # Auto-create tables on startup
 Base.metadata.create_all(bind=engine)
@@ -19,6 +20,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(authors.router)
 
 
 @app.get("/")
