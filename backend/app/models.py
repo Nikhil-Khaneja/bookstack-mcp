@@ -13,7 +13,6 @@ class Author(Base):
     created_at   = Column(DateTime, default=func.now())
     updated_at   = Column(DateTime, default=func.now(), onupdate=func.now())
 
-    # One author can have many books
     books = relationship("Book", back_populates="author")
 
 
@@ -29,5 +28,4 @@ class Book(Base):
     created_at       = Column(DateTime, default=func.now())
     updated_at       = Column(DateTime, default=func.now(), onupdate=func.now())
 
-    # Each book belongs to one author
     author = relationship("Author", back_populates="books")
