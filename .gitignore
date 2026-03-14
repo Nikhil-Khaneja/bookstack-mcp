@@ -213,3 +213,6 @@ dist/
 
 # Environment files
 .env
+.venv314/
+audit/
+*.jsonl
