@@ -1,16 +1,8 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, DeclarativeBase
-from dotenv import load_dotenv
-import os
+"""Legacy shim. Kept so `from app.database import Base/engine/SessionLocal`
+in older code paths continues to work. The canonical definitions live in
+`app.db.session`.
+"""
 
-load_dotenv()
+from .db.session import Base, SessionLocal, engine  # noqa: F401
 
-DATABASE_URL = os.getenv("DATABASE_URL", "mysql+pymysql://root:password@localhost:3306/library_db")
-
-engine = create_engine(DATABASE_URL)
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-
-class Base(DeclarativeBase):
-    pass
+__all__ = ["Base", "SessionLocal", "engine"]
