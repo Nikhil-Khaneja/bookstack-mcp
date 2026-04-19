@@ -1,0 +1,62 @@
+version: "3.9"
+
+# ── Services ──────────────────────────────────────────────────────────
+services:
+
+  # ── Postgres + pgvector ──────────────────────────────────────────────
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: bookstack
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d bookstack"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── FastAPI backend ──────────────────────────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - backend/.env
+    environment:
+      DATABASE_URL: postgresql+psycopg://postgres:postgres@postgres:5432/bookstack
+      APP_ENV: prod
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - audit_logs:/app/audit
+    restart: unless-stopped
+
+  # ── MLflow tracking server (optional profile) ────────────────────────
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.17.0
+    profiles: ["mlflow"]
+    command: >
+      mlflow server
+        --host 0.0.0.0
+        --port 5000
+        --backend-store-uri sqlite:///mlflow.db
+        --default-artifact-root /mlflow/artifacts
+    volumes:
+      - mlflow_data:/mlflow
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+
+# ── Volumes ───────────────────────────────────────────────────────────
+volumes:
+  pgdata:
+  audit_logs:
+  mlflow_data:

@@ -1,9 +1,9 @@
 """
 MCP Server — TheMealDB Recipe Tools
-Exposes 4 tools that Claude can call to search and fetch recipes.
+Exposes 4 tools that any MCP agent can call to search and fetch recipes.
 
 Run locally:   mcp dev meals_server.py
-Connect Claude Desktop: add entry to claude_desktop_config.json (see README)
+Connect any MCP client: add entry to mcp_config.json (see README)
 
 IMPORTANT: This server uses STDIO transport.
            Never write to stdout — it corrupts the JSON-RPC stream.
